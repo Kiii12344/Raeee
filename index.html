@@ -1,1 +1,191 @@
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
+export default function LoveSite() {
+  const [password, setPassword] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  const [hintIndex, setHintIndex] = useState(0);
+
+  const correctPassword = "rachel";
+
+  const photos = [
+    "/photos/rachel1.jpg",
+    "/photos/rachel2.jpg",
+    "/photos/rachel3.jpg",
+  ];
+
+  const hints = [
+    "Hint: it's her name 💕",
+    "Hint: the person who makes your world softer",
+    "Hint: starts with R... ends with love"
+  ];
+
+  const letter = `When the world feels heavy, your voice is the only place my heart feels light.
+You are the calm in my chaos, the warmth in my cold nights, the reason ordinary days feel magical.
+
+Every moment with you feels like time moves too fast, like the universe knows I'd stay here forever.
+
+Your smile feels like sunrise, your laugh sounds like home.
+
+If the world asked where my heart belongs — it belongs wherever you are.
+
+In every lifetime, I would still search for you and choose you again.`;
+
+  // slideshow
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % photos.length);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // typing effect
+  useEffect(() => {
+    if (!opened) return;
+
+    let i = 0;
+    setTypedText("");
+
+    const interval = setInterval(() => {
+      setTypedText(letter.slice(0, i));
+      i++;
+      if (i > letter.length) clearInterval(interval);
+    }, 25);
+
+    return () => clearInterval(interval);
+  }, [opened]);
+
+  function handleUnlock() {
+    if (password.toLowerCase() === correctPassword) {
+      setUnlocked(true);
+    } else {
+      alert(hints[hintIndex]);
+    }
+  }
+
+  function nextHint() {
+    setHintIndex((prev) => (prev + 1) % hints.length);
+  }
+
+  return (
+    <div className="min-h-screen relative overflow-hidden bg-pink-50 flex items-center justify-center p-4">
+
+      {/* 💕 floating hearts */}
+      <div className="pointer-events-none absolute inset-0">
+        {[...Array(25)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-pink-300 text-xl"
+            initial={{
+              y: "100vh",
+              x: Math.random() * 100 + "vw",
+              opacity: 0,
+            }}
+            animate={{
+              y: "-10vh",
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 6 + Math.random() * 5,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+            }}
+          >
+            💕
+          </motion.div>
+        ))}
+      </div>
+
+      {/* 🎵 music (only works after interaction on GitHub Pages) */}
+      {unlocked && (
+        <audio autoPlay loop>
+          <source src="/music/romantic.mp3" type="audio/mp3" />
+        </audio>
+      )}
+
+      {/* LOCK SCREEN */}
+      {!unlocked ? (
+        <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md text-center space-y-4 z-10">
+          <h1 className="text-2xl font-bold">🔒 Mystery Page</h1>
+          <p className="text-gray-600">A message is waiting for Rachel...</p>
+
+          <input
+            type="password"
+            className="w-full p-3 border rounded-xl"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter password"
+          />
+
+          <button
+            onClick={handleUnlock}
+            className="w-full bg-pink-500 text-white py-2 rounded-xl"
+          >
+            Unlock
+          </button>
+
+          <button
+            onClick={nextHint}
+            className="text-sm text-pink-500 mt-2"
+          >
+            Need a hint?
+          </button>
+
+          <p className="text-gray-400 text-sm mt-2">
+            {hints[hintIndex]}
+          </p>
+        </div>
+      ) : !opened ? (
+        /* ENVELOPE */
+        <div className="text-center space-y-6 z-10">
+          <h1 className="text-3xl font-bold text-pink-600">
+            You unlocked it 💌
+          </h1>
+
+          <motion.div
+            onClick={() => setOpened(true)}
+            whileTap={{ scale: 0.9 }}
+            animate={{ rotate: [0, -2, 2, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="text-7xl cursor-pointer"
+          >
+            ✉️
+          </motion.div>
+
+          <p className="text-gray-500">Tap the envelope</p>
+        </div>
+      ) : (
+        /* LETTER */
+        <div className="bg-white max-w-2xl w-full p-6 rounded-2xl shadow-xl z-10 space-y-6">
+          <h2 className="text-2xl font-bold text-pink-600 text-center">
+            Dear Rachel 💖
+          </h2>
+
+          {/* 📸 slideshow */}
+          <div className="relative w-full h-64 overflow-hidden rounded-xl">
+            {photos.map((img, i) => (
+              <motion.img
+                key={i}
+                src={img}
+                className="absolute w-full h-64 object-cover"
+                animate={{ opacity: i === index ? 1 : 0 }}
+                transition={{ duration: 1 }}
+              />
+            ))}
+          </div>
+
+          {/* ✍️ typing effect letter */}
+          <p className="whitespace-pre-line text-gray-700 leading-relaxed min-h-[200px]">
+            {typedText}
+          </p>
+
+          <div className="text-center text-2xl">🌸✨💗</div>
+        </div>
+      )}
+    </div>
+  );
+}
