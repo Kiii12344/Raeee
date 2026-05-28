@@ -1,191 +1,373 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Rachel 💖</title>
 
-export default function LoveSite() {
-  const [password, setPassword] = useState("");
-  const [unlocked, setUnlocked] = useState(false);
-  const [opened, setOpened] = useState(false);
-  const [index, setIndex] = useState(0);
-  const [typedText, setTypedText] = useState("");
-  const [hintIndex, setHintIndex] = useState(0);
-
-  const correctPassword = "rachel";
-
-  const photos = [
-    "/photos/Rachel 1.jpg",
-    "/photos/Rachel 2.jpg",
-    "/photos/Rachel 3.jpg",
-  ];
-
-  const hints = [
-    "Hint: it's her name 💕",
-    "Hint: the person who makes your world softer",
-    "Hint: starts with R... ends with love"
-  ];
-
-  const letter = `When the world feels heavy, your voice is the only place my heart feels light.
-You are the calm in my chaos, the warmth in my cold nights, the reason ordinary days feel magical.
-
-Every moment with you feels like time moves too fast, like the universe knows I'd stay here forever.
-
-Your smile feels like sunrise, your laugh sounds like home.
-
-If the world asked where my heart belongs — it belongs wherever you are.
-
-In every lifetime, I would still search for you and choose you again.`;
-
-  // slideshow
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % photos.length);
-    }, 3500);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // typing effect
-  useEffect(() => {
-    if (!opened) return;
-
-    let i = 0;
-    setTypedText("");
-
-    const interval = setInterval(() => {
-      setTypedText(letter.slice(0, i));
-      i++;
-      if (i > letter.length) clearInterval(interval);
-    }, 25);
-
-    return () => clearInterval(interval);
-  }, [opened]);
-
-  function handleUnlock() {
-    if (password.toLowerCase() === correctPassword) {
-      setUnlocked(true);
-    } else {
-      alert(hints[hintIndex]);
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  }
 
-  function nextHint() {
-    setHintIndex((prev) => (prev + 1) % hints.length);
-  }
+    body {
+      min-height: 100vh;
+      font-family: Georgia, serif;
+      background: linear-gradient(135deg, #ffe4ec, #fff6f9, #ffd6e8);
+      overflow-x: hidden;
+      color: #5a2a3a;
+    }
 
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-pink-50 flex items-center justify-center p-4">
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      z-index: 2;
+    }
 
-      {/* 💕 floating hearts */}
-      <div className="pointer-events-none absolute inset-0">
-        {[...Array(25)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-pink-300 text-xl"
-            initial={{
-              y: "100vh",
-              x: Math.random() * 100 + "vw",
-              opacity: 0,
-            }}
-            animate={{
-              y: "-10vh",
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 6 + Math.random() * 5,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-          >
-            💕
-          </motion.div>
-        ))}
+    .card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 28px;
+      border-radius: 24px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(255, 90, 140, 0.25);
+      animation: fadeIn 1s ease;
+    }
+
+    h1, h2 {
+      margin-bottom: 15px;
+      color: #d6336c;
+    }
+
+    p {
+      line-height: 1.7;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #ffc2d6;
+      margin: 18px 0 12px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    button {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: #ff5c8a;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 6px;
+      box-shadow: 0 8px 20px rgba(255, 92, 138, 0.3);
+    }
+
+    button:hover {
+      background: #e6497a;
+    }
+
+    .hint {
+      font-size: 14px;
+      color: #9d4b64;
+      margin-top: 10px;
+      min-height: 22px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .envelope-wrap {
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+
+    .envelope {
+      width: 190px;
+      height: 125px;
+      background: #ff8fab;
+      margin: 30px auto;
+      position: relative;
+      border-radius: 0 0 18px 18px;
+      cursor: pointer;
+      box-shadow: 0 20px 40px rgba(255, 92, 138, 0.35);
+      animation: float 2.5s infinite ease-in-out;
+    }
+
+    .envelope::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-left: 95px solid transparent;
+      border-right: 95px solid transparent;
+      border-top: 70px solid #ffb3c6;
+      transform-origin: top;
+      transition: 0.8s;
+      z-index: 3;
+    }
+
+    .envelope.open::before {
+      transform: rotateX(180deg);
+    }
+
+    .paper {
+      width: 150px;
+      height: 95px;
+      background: white;
+      position: absolute;
+      left: 20px;
+      bottom: 10px;
+      border-radius: 10px;
+      transition: 1s;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+    }
+
+    .envelope.open .paper {
+      transform: translateY(-85px);
+    }
+
+    .letter-card {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 24px;
+      border-radius: 26px;
+      box-shadow: 0 20px 60px rgba(255, 90, 140, 0.28);
+      animation: fadeIn 1s ease;
+    }
+
+    .slideshow {
+      width: 100%;
+      height: 280px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      margin: 20px 0;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+    }
+
+    .slideshow img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+    }
+
+    .slideshow img.active {
+      opacity: 1;
+    }
+
+    #letterText {
+      white-space: pre-line;
+      text-align: left;
+      font-size: 17px;
+      line-height: 1.8;
+      min-height: 310px;
+    }
+
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      color: #ff6f9f;
+      animation: rise linear infinite;
+      z-index: 1;
+      opacity: 0.8;
+    }
+
+    @keyframes rise {
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+      }
+      20% { opacity: 1; }
+      to {
+        transform: translateY(-110vh) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @media (max-width: 600px) {
+      .card, .letter-card {
+        padding: 20px;
+        border-radius: 20px;
+      }
+
+      .slideshow {
+        height: 230px;
+      }
+
+      #letterText {
+        font-size: 15px;
+        min-height: 360px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="music" loop>
+    <source src="music/romantic.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div class="page">
+    <div id="lockScreen" class="card">
+      <h1>🔒 Mystery Page</h1>
+      <p>A secret message is waiting for Rachel...</p>
+
+      <input id="passwordInput" type="password" placeholder="Enter password" />
+
+      <button onclick="unlockPage()">Unlock</button>
+      <button onclick="showHint()">Need a hint?</button>
+
+      <p id="hintText" class="hint">Hint: click the hint button if you need help 💕</p>
+    </div>
+
+    <div id="envelopeScreen" class="envelope-wrap hidden">
+      <h1>You unlocked it 💌</h1>
+      <p>Tap the envelope to open the letter</p>
+
+      <div id="envelope" class="envelope" onclick="openEnvelope()">
+        <div class="paper">💖</div>
+      </div>
+    </div>
+
+    <div id="letterScreen" class="letter-card hidden">
+      <h2>Dear Rachel 💖</h2>
+
+      <div class="slideshow">
+        <img src="photos/Rachel 1.jpg" class="active" alt="Rachel photo 1">
+        <img src="photos/Rachel 2.jpg" alt="Rachel photo 2">
+        <img src="photos/Rachel 3.jpg" alt="Rachel photo 3">
       </div>
 
-      {/* 🎵 music (only works after interaction on GitHub Pages) */}
-      {unlocked && (
-        <audio autoPlay loop>
-          <source src="/music/romantic.mp3" type="audio/mp3" />
-        </audio>
-      )}
-
-      {/* LOCK SCREEN */}
-      {!unlocked ? (
-        <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md text-center space-y-4 z-10">
-          <h1 className="text-2xl font-bold">🔒 Mystery Page</h1>
-          <p className="text-gray-600">A message is waiting for Rachel...</p>
-
-          <input
-            type="password"
-            className="w-full p-3 border rounded-xl"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-          />
-
-          <button
-            onClick={handleUnlock}
-            className="w-full bg-pink-500 text-white py-2 rounded-xl"
-          >
-            Unlock
-          </button>
-
-          <button
-            onClick={nextHint}
-            className="text-sm text-pink-500 mt-2"
-          >
-            Need a hint?
-          </button>
-
-          <p className="text-gray-400 text-sm mt-2">
-            {hints[hintIndex]}
-          </p>
-        </div>
-      ) : !opened ? (
-        /* ENVELOPE */
-        <div className="text-center space-y-6 z-10">
-          <h1 className="text-3xl font-bold text-pink-600">
-            You unlocked it 💌
-          </h1>
-
-          <motion.div
-            onClick={() => setOpened(true)}
-            whileTap={{ scale: 0.9 }}
-            animate={{ rotate: [0, -2, 2, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="text-7xl cursor-pointer"
-          >
-            ✉️
-          </motion.div>
-
-          <p className="text-gray-500">Tap the envelope</p>
-        </div>
-      ) : (
-        /* LETTER */
-        <div className="bg-white max-w-2xl w-full p-6 rounded-2xl shadow-xl z-10 space-y-6">
-          <h2 className="text-2xl font-bold text-pink-600 text-center">
-            Dear Rachel 💖
-          </h2>
-
-          {/* 📸 slideshow */}
-          <div className="relative w-full h-64 overflow-hidden rounded-xl">
-            {photos.map((img, i) => (
-              <motion.img
-                key={i}
-                src={img}
-                className="absolute w-full h-64 object-cover"
-                animate={{ opacity: i === index ? 1 : 0 }}
-                transition={{ duration: 1 }}
-              />
-            ))}
-          </div>
-
-          {/* ✍️ typing effect letter */}
-          <p className="whitespace-pre-line text-gray-700 leading-relaxed min-h-[200px]">
-            {typedText}
-          </p>
-
-          <div className="text-center text-2xl">🌸✨💗</div>
-        </div>
-      )}
+      <p id="letterText"></p>
+      <p style="text-align:center; font-size:26px; margin-top:20px;">🌸 ✨ 💗</p>
     </div>
-  );
-}
+  </div>
+
+  <script>
+    const correctPassword = "rachel";
+
+    const hints = [
+      "Hint: it is her name 💕",
+      "Hint: the person who makes your heart feel soft",
+      "Hint: starts with R and means everything to this page"
+    ];
+
+    let hintIndex = 0;
+
+    const letter = `When the world feels heavy, your voice is the only place my heart feels light.
+You are the calm in my chaos, the warmth in my cold nights, the reason ordinary days feel like something magical.
+Every moment with you feels like time is moving too fast, like the universe knows I'd stay here forever if it let me.
+
+Your smile feels like sunrise, your laugh sounds like home, and your presence alone can quiet every storm inside me.
+
+If the world asked me where my heart belongs, I wouldn't need to think — it belongs wherever you are.
+
+In every lifetime, through every version of this world, I would still search for you and choose you again.`;
+
+    function unlockPage() {
+      const input = document.getElementById("passwordInput").value.toLowerCase().trim();
+
+      if (input === correctPassword) {
+        document.getElementById("lockScreen").classList.add("hidden");
+        document.getElementById("envelopeScreen").classList.remove("hidden");
+
+        const music = document.getElementById("music");
+        music.volume = 0.35;
+        music.play().catch(() => {
+          console.log("Music will start after user interaction.");
+        });
+      } else {
+        document.getElementById("hintText").innerText = hints[hintIndex];
+        hintIndex = (hintIndex + 1) % hints.length;
+      }
+    }
+
+    function showHint() {
+      document.getElementById("hintText").innerText = hints[hintIndex];
+      hintIndex = (hintIndex + 1) % hints.length;
+    }
+
+    function openEnvelope() {
+      const envelope = document.getElementById("envelope");
+      envelope.classList.add("open");
+
+      setTimeout(() => {
+        document.getElementById("envelopeScreen").classList.add("hidden");
+        document.getElementById("letterScreen").classList.remove("hidden");
+        typeLetter();
+      }, 1100);
+    }
+
+    function typeLetter() {
+      const textBox = document.getElementById("letterText");
+      let i = 0;
+      textBox.innerText = "";
+
+      const typing = setInterval(() => {
+        textBox.innerText = letter.slice(0, i);
+        i++;
+
+        if (i > letter.length) {
+          clearInterval(typing);
+        }
+      }, 28);
+    }
+
+    let slideIndex = 0;
+    const slides = document.querySelectorAll(".slideshow img");
+
+    setInterval(() => {
+      slides[slideIndex].classList.remove("active");
+      slideIndex = (slideIndex + 1) % slides.length;
+      slides[slideIndex].classList.add("active");
+    }, 3500);
+
+    function createHearts() {
+      setInterval(() => {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "💕";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = Math.random() * 18 + 14 + "px";
+        heart.style.animationDuration = Math.random() * 4 + 5 + "s";
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 9000);
+      }, 450);
+    }
+
+    createHearts();
+  </script>
+</body>
+</html>
